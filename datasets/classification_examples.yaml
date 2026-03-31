@@ -1,0 +1,26 @@
+suite_name: classification_examples
+description: Synthetic, public-safe classification examples with allowed-label constraints.
+cases:
+  - id: cls-001
+    task: classification
+    input:
+      text: "My imaginary order from NovaSnacks was charged twice. Please help."
+    expected:
+      label: support
+      allowed_labels: [support, billing, sales, general]
+    checks:
+      - type: allowed_labels
+        config:
+          allowed_labels: [support, billing, sales, general]
+
+  - id: cls-002
+    task: classification
+    input:
+      text: "Can the fake startup resend invoice INV-204 for March?"
+    expected:
+      label: billing
+      allowed_labels: [support, billing, sales, general]
+    checks:
+      - type: allowed_labels
+        config:
+          allowed_labels: [support, billing, sales, general]

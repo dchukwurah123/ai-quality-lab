@@ -1,0 +1,23 @@
+{
+  "suite_name": "minimal_first_slice",
+  "description": "Tiny deterministic dataset for initial scaffold.",
+  "cases": [
+    {
+      "id": "sum-001",
+      "task": "summarization",
+      "input": {
+        "text": "Launch moved to Friday."
+      },
+      "expected": "Launch moved to Friday.",
+      "prediction": "Launch moved to Friday.",
+      "checks": [
+        {
+          "type": "exact_match",
+          "config": {
+            "case_sensitive": true
+          }
+        }
+      ]
+    }
+  ]
+}

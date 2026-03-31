@@ -1,0 +1,105 @@
+{
+  "suite_name": "starter_suite",
+  "description": "Deterministic starter suite for summarization, classification, extraction, and compliance.",
+  "cases": [
+    {
+      "id": "sum-001",
+      "task": "summarization",
+      "input": {
+        "text": "The product launch was delayed by two weeks due to testing issues. The team resolved defects and published a revised timeline."
+      },
+      "expected": "The product launch was delayed by two weeks due to testing issues",
+      "checks": [
+        {
+          "type": "exact_match",
+          "config": {
+            "case_sensitive": true
+          }
+        },
+        {
+          "type": "rubric",
+          "config": {
+            "passing_score": 0.5,
+            "criteria": [
+              {
+                "name": "mentions_delay",
+                "weight": 1.0,
+                "required_terms": ["delayed"]
+              },
+              {
+                "name": "mentions_cause",
+                "weight": 1.0,
+                "required_terms": ["testing issues"]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cls-001",
+      "task": "classification",
+      "input": {
+        "text": "I need a refund for a duplicate charge on my card."
+      },
+      "expected": "support",
+      "checks": [
+        {
+          "type": "allowed_labels",
+          "config": {
+            "allowed_labels": ["support", "billing", "general"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ext-001",
+      "task": "extraction",
+      "input": {
+        "text": "Please contact jane.doe@example.com for onboarding."
+      },
+      "expected": {
+        "email": "jane.doe@example.com"
+      },
+      "checks": [
+        {
+          "type": "schema_validation",
+          "config": {
+            "schema": {
+              "type": "object",
+              "required": ["email"],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "regex_constraints",
+          "config": {
+            "patterns": ["[\\\\w.+\\'-]+@[\\\\w.-]+\\\\.\\\\w+"],
+            "required_terms": ["@"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cmp-001",
+      "task": "compliance",
+      "input": {
+        "text": "This supplement is a guaranteed cure for all illnesses."
+      },
+      "expected": "non-compliant",
+      "checks": [
+        {
+          "type": "allowed_labels",
+          "config": {
+            "allowed_labels": ["compliant", "non-compliant"]
+          }
+        }
+      ]
+    }
+  ]
+}

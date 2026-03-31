@@ -1,0 +1,37 @@
+suite_name: compliance_examples
+description: Synthetic style/policy examples for tone, banned phrases, and formatting checks.
+cases:
+  - id: cmp-001
+    task: compliance
+    input:
+      text: "Buy now! This fake tonic is a guaranteed cure for every condition."
+    expected:
+      verdict: non-compliant
+      policy_id: policy-style-01
+      required_terms: [guaranteed cure]
+    checks:
+      - type: allowed_labels
+        config:
+          allowed_labels: [compliant, non-compliant]
+      - type: regex_constraints
+        config:
+          forbidden_terms: [guaranteed cure, every condition]
+
+  - id: cmp-002
+    task: compliance
+    input:
+      text: "Please review your request. We cannot promise outcomes. Contact support@example.test for help."
+    expected:
+      verdict: compliant
+      policy_id: policy-style-02
+      required_terms: [cannot promise outcomes]
+    checks:
+      - type: allowed_labels
+        config:
+          allowed_labels: [compliant, non-compliant]
+      - type: regex_constraints
+        config:
+          required_terms: ["cannot promise outcomes", "@example.test"]
+          forbidden_terms: ["guaranteed", "100% certain"]
+          patterns:
+            - ".*\\.$"

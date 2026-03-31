@@ -1,0 +1,42 @@
+{
+  "suite_name": "summarization_examples",
+  "description": "Synthetic, public-safe summarization examples with explicit constraints.",
+  "cases": [
+    {
+      "id": "sum-001",
+      "task": "summarization",
+      "input": {
+        "text": "FakeCo's robot vacuum launch moved from Tuesday to Thursday after QA found a battery warning bug. The team fixed the issue and updated release notes."
+      },
+      "expected": "FakeCo delayed the robot vacuum launch by two days after QA found a battery warning bug.",
+      "checks": [
+        { "type": "rubric", "config": {
+          "passing_score": 0.67,
+          "criteria": [
+            { "name": "captures_timeline_change", "weight": 1, "required_terms": ["delayed", "two days"] },
+            { "name": "captures_cause", "weight": 1, "required_terms": ["QA", "battery warning bug"] },
+            { "name": "keeps_brand_name", "weight": 1, "required_terms": ["FakeCo"] }
+          ]
+        }},
+        { "type": "regex_constraints", "config": { "min_length": 60, "max_length": 180 } }
+      ]
+    },
+    {
+      "id": "sum-002",
+      "task": "summarization",
+      "input": {
+        "text": "In the fictional city app, the transit alert service was noisy for 30 minutes. Engineers rolled back the alert rule, restored normal traffic, and planned a test update."
+      },
+      "expected": {
+        "summary": "Engineers rolled back a noisy transit alert rule, restored service, and planned stronger tests."
+      },
+      "checks": [
+        { "type": "regex_constraints", "config": {
+          "required_terms": ["rolled back", "restored"],
+          "forbidden_terms": ["catastrophic", "disaster"],
+          "max_length": 150
+        }}
+      ]
+    }
+  ]
+}

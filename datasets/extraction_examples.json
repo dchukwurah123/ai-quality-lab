@@ -1,0 +1,64 @@
+{
+  "suite_name": "extraction_examples",
+  "description": "Synthetic extraction examples with expected structured fields.",
+  "cases": [
+    {
+      "id": "ext-001",
+      "task": "extraction",
+      "input": {
+        "text": "Demo signup: user_name=Sky Pilot, email=sky.pilot@example.test, plan=starter."
+      },
+      "expected": {
+        "fields": {
+          "user_name": "Sky Pilot",
+          "email": "sky.pilot@example.test",
+          "plan": "starter"
+        },
+        "required_fields": ["user_name", "email", "plan"]
+      },
+      "checks": [
+        { "type": "schema_validation", "config": {
+          "schema": {
+            "type": "object",
+            "required": ["user_name", "email", "plan"],
+            "properties": {
+              "user_name": { "type": "string" },
+              "email": { "type": "string" },
+              "plan": { "type": "string", "enum": ["starter", "pro"] }
+            }
+          }
+        }}
+      ]
+    },
+    {
+      "id": "ext-002",
+      "task": "extraction",
+      "input": {
+        "text": "Mock receipt: receipt_id=R-77, amount_usd=49, currency=USD, shipped=false."
+      },
+      "expected": {
+        "fields": {
+          "receipt_id": "R-77",
+          "amount_usd": 49,
+          "currency": "USD",
+          "shipped": false
+        },
+        "required_fields": ["receipt_id", "amount_usd", "currency", "shipped"]
+      },
+      "checks": [
+        { "type": "schema_validation", "config": {
+          "schema": {
+            "type": "object",
+            "required": ["receipt_id", "amount_usd", "currency", "shipped"],
+            "properties": {
+              "receipt_id": { "type": "string" },
+              "amount_usd": { "type": "integer" },
+              "currency": { "type": "string", "enum": ["USD"] },
+              "shipped": { "type": "boolean" }
+            }
+          }
+        }}
+      ]
+    }
+  ]
+}
