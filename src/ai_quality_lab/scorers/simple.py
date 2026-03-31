@@ -104,14 +104,18 @@ class RegexConstraintsScorer:
         missing_terms = [t for t in required_terms if t not in text]
         forbidden_hits = [t for t in forbidden_terms if t in text]
         length_ok = len(text) >= min_length and (max_length is None or len(text) <= max_length)
+        non_empty = len(text.strip()) > 0
 
-        total_checks = max(1, len(patterns) + len(required_terms) + len(forbidden_terms) + 1)
+        total_checks = max(
+            1, len(patterns) + len(required_terms) + len(forbidden_terms) + 2
+        )
         failures = (
             len(missing_patterns)
             + len(invalid_patterns)
             + len(missing_terms)
             + len(forbidden_hits)
             + (0 if length_ok else 1)
+            + (0 if non_empty else 1)
         )
         score = max(0.0, 1.0 - failures / total_checks)
         passed = failures == 0
@@ -123,7 +127,7 @@ class RegexConstraintsScorer:
                 f"Constraint failures: patterns={len(missing_patterns)}, "
                 f"invalid_patterns={len(invalid_patterns)}, "
                 f"required_terms={len(missing_terms)}, forbidden_terms={len(forbidden_hits)}, "
-                f"length_ok={length_ok}."
+                f"length_ok={length_ok}, non_empty={non_empty}."
             )
 
         return CheckOutcome(
