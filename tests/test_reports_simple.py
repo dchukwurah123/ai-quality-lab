@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from ai_quality_lab.loaders import load_suite
-from ai_quality_lab.reports.writers import write_markdown_report, write_json_report
+from ai_quality_lab.reports.writers import write_json_report, write_markdown_report
 from ai_quality_lab.runner import run_suite
 
 
