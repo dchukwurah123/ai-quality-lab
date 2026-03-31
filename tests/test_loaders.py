@@ -25,8 +25,16 @@ def test_load_suite_supports_json_and_yaml(
     ("task", "raw_expected", "expected_type"),
     [
         ("summarization", "short summary", SummarizationExpected),
-        ("classification", {"label": "support", "allowed_labels": ["support", "billing"]}, ClassificationExpected),
-        ("extraction", {"fields": {"email": "a@b.com"}, "required_fields": ["email"]}, ExtractionExpected),
+        (
+            "classification",
+            {"label": "support", "allowed_labels": ["support", "billing"]},
+            ClassificationExpected,
+        ),
+        (
+            "extraction",
+            {"fields": {"email": "a@b.com"}, "required_fields": ["email"]},
+            ExtractionExpected,
+        ),
         ("compliance", {"verdict": "compliant", "policy_id": "p1"}, ComplianceExpected),
     ],
 )

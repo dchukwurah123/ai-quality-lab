@@ -41,7 +41,11 @@ class ExactMatchScorer:
             check_type="exact_match",
             passed=passed,
             score=1.0 if passed else 0.0,
-            explanation="Prediction matches expected exactly." if passed else "Prediction differs from expected.",
+            explanation=(
+                "Prediction matches expected exactly."
+                if passed
+                else "Prediction differs from expected."
+            ),
             details={"expected": case.expected.reference_value(), "actual": prediction},
         )
 
@@ -102,8 +106,12 @@ class RegexConstraintsScorer:
         length_ok = len(text) >= min_length and (max_length is None or len(text) <= max_length)
 
         total_checks = max(1, len(patterns) + len(required_terms) + len(forbidden_terms) + 1)
-        failures = len(missing_patterns) + len(invalid_patterns) + len(missing_terms) + len(forbidden_hits) + (
-            0 if length_ok else 1
+        failures = (
+            len(missing_patterns)
+            + len(invalid_patterns)
+            + len(missing_terms)
+            + len(forbidden_hits)
+            + (0 if length_ok else 1)
         )
         score = max(0.0, 1.0 - failures / total_checks)
         passed = failures == 0
@@ -156,7 +164,11 @@ class SchemaValidationScorer:
             check_type="schema_validation",
             passed=passed,
             score=1.0 if passed else 0.0,
-            explanation="Schema is valid." if passed else f"Schema validation failed with {len(errors)} error(s).",
+            explanation=(
+                "Schema is valid."
+                if passed
+                else f"Schema validation failed with {len(errors)} error(s)."
+            ),
             details={"errors": errors, "actual": value},
         )
 
@@ -309,7 +321,13 @@ class ScorerRegistry:
             raise KeyError(f"Unknown scorer type: {check_type}")
         return scorer
 
-    def score_check(self, case: EvalCase, prediction: Any, check_type: str, config: dict[str, Any]) -> CheckOutcome:
+    def score_check(
+        self,
+        case: EvalCase,
+        prediction: Any,
+        check_type: str,
+        config: dict[str, Any],
+    ) -> CheckOutcome:
         scorer = self.get(check_type)
         return scorer.score(case, prediction, config)
 
@@ -346,7 +364,11 @@ def _coerce_json(value: Any) -> Any:
     return value
 
 
-def _is_schema_type_match(expected_type: str, value: Any, py_type: type[Any] | tuple[type[Any], ...]) -> bool:
+def _is_schema_type_match(
+    expected_type: str,
+    value: Any,
+    py_type: type[Any] | tuple[type[Any], ...],
+) -> bool:
     # Avoid bool passing as integer/number because bool is subclass of int.
     if expected_type in {"integer", "number"} and isinstance(value, bool):
         return False

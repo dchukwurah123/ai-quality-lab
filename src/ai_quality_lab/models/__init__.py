@@ -2,9 +2,9 @@
 
 from ai_quality_lab.models.core import (
     CaseOutcome,
+    CheckOutcome,
     ClassificationExpected,
     ComplianceExpected,
-    CheckOutcome,
     EvalCase,
     EvalCheck,
     EvalSuite,

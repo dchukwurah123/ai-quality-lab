@@ -1,5 +1,5 @@
-import json
 import copy
+import json
 from pathlib import Path
 
 import pytest
@@ -32,8 +32,12 @@ def test_cli_eval_single_dataset_outputs_json_and_markdown(
     assert payload["summary"]["all_suites_meet_thresholds"] is True
     assert payload["summary"]["suite_count"] == 1
     assert payload["suites"][0]["result"]["suite_name"] == "fixture_suite"
+    table_header = (
+        "| Suite Name | Task Type(s) | Total Cases | Pass Count | "
+        "Fail Count | Average Score | Top Failure Reasons | Status |"
+    )
     markdown = (out_dir / "eval_summary.md").read_text(encoding="utf-8")
-    assert "| Suite Name | Task Type(s) | Total Cases | Pass Count | Fail Count | Average Score | Top Failure Reasons | Status |" in markdown
+    assert table_header in markdown
 
 
 @pytest.mark.parametrize(

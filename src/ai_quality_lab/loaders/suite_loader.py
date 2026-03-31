@@ -87,8 +87,9 @@ def _parse_check(raw: Any) -> EvalCheck:
         raise DatasetError("Each check must be an object.")
     check_type = _required_str(raw, "type")
     if check_type not in SUPPORTED_CHECK_TYPES:
+        supported = ", ".join(sorted(SUPPORTED_CHECK_TYPES))
         raise DatasetError(
-            f"Unsupported check type '{check_type}'. Expected one of {sorted(SUPPORTED_CHECK_TYPES)}."
+            f"Unsupported check type '{check_type}'. Expected one of: {supported}."
         )
     config = raw.get("config", {})
     if not isinstance(config, dict):

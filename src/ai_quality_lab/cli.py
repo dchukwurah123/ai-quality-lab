@@ -7,10 +7,10 @@ import json
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from ai_quality_lab.adapters import AdapterName
-from ai_quality_lab.loaders import DatasetError
-from ai_quality_lab.loaders import load_suite
+from ai_quality_lab.loaders import DatasetError, load_suite
 from ai_quality_lab.models import SuiteOutcome
 from ai_quality_lab.runner import run_suite
 
@@ -25,7 +25,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     source_group = eval_parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("--dataset", help="Path to one dataset file (.json/.yaml/.yml).")
-    source_group.add_argument("--datasets-dir", help="Path to a directory containing dataset files.")
+    source_group.add_argument(
+        "--datasets-dir",
+        help="Path to a directory containing dataset files.",
+    )
     eval_parser.add_argument(
         "--recursive",
         action="store_true",
@@ -114,7 +117,12 @@ def _eval(
                 "result": outcome.to_dict(),
             }
         )
-        meets = _suite_meets_thresholds(outcome.pass_rate, outcome.average_score, min_pass_rate, min_average_score)
+        meets = _suite_meets_thresholds(
+            outcome.pass_rate,
+            outcome.average_score,
+            min_pass_rate,
+            min_average_score,
+        )
         suite_summaries.append(
             {
                 "suite_name": outcome.suite_name,
@@ -154,7 +162,12 @@ def _eval(
     md_path = output_dir / "eval_summary.md"
     json_path.write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
     md_path.write_text(
-        _build_markdown_summary(suite_summaries, min_pass_rate, min_average_score, all_meet_thresholds),
+        _build_markdown_summary(
+            suite_summaries,
+            min_pass_rate,
+            min_average_score,
+            all_meet_thresholds,
+        ),
         encoding="utf-8",
     )
 
@@ -188,11 +201,17 @@ def _suite_meets_thresholds(
 
 
 def _build_markdown_summary(
-    suite_summaries: list[dict[str, object]],
+    suite_summaries: list[dict[str, Any]],
     min_pass_rate: float,
     min_average_score: float,
     all_meet_thresholds: bool,
 ) -> str:
+    total_cases = sum(int(suite["total_cases"]) for suite in suite_summaries)
+    suites_meeting = sum(1 for suite in suite_summaries if suite["meets_thresholds"])
+    table_header = (
+        "| Suite Name | Task Type(s) | Total Cases | Pass Count | "
+        "Fail Count | Average Score | Top Failure Reasons | Status |"
+    )
     lines = [
         "# Evaluation Summary",
         "",
@@ -200,17 +219,20 @@ def _build_markdown_summary(
         f"- Min average score threshold: {min_average_score:.2f}",
         f"- Threshold status: {'PASS' if all_meet_thresholds else 'FAIL'}",
         f"- Suites processed: {len(suite_summaries)}",
-        f"- Total cases: {sum(int(suite['total_cases']) for suite in suite_summaries)}",
-        f"- Suites meeting thresholds: {sum(1 for suite in suite_summaries if suite['meets_thresholds'])}/{len(suite_summaries)}",
+        f"- Total cases: {total_cases}",
+        f"- Suites meeting thresholds: {suites_meeting}/{len(suite_summaries)}",
         "",
         "## Suite Summary",
         "",
-        "| Suite Name | Task Type(s) | Total Cases | Pass Count | Fail Count | Average Score | Top Failure Reasons | Status |",
+        table_header,
         "| --- | --- | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     for suite in suite_summaries:
         status = "PASS" if suite["meets_thresholds"] else "FAIL"
-        task_types = ", ".join(str(task) for task in suite["task_types"]) if suite["task_types"] else "-"
+        if suite["task_types"]:
+            task_types = ", ".join(str(task) for task in suite["task_types"])
+        else:
+            task_types = "-"
         failure_reasons = suite["top_failure_reasons"]
         if isinstance(failure_reasons, list) and failure_reasons:
             reasons_text = "; ".join(str(reason) for reason in failure_reasons)
@@ -228,7 +250,7 @@ def _build_markdown_summary(
 
 
 def _print_console_summary(
-    suite_summaries: list[dict[str, object]],
+    suite_summaries: list[dict[str, Any]],
     min_pass_rate: float,
     min_average_score: float,
     json_path: Path,
