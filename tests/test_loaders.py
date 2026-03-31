@@ -86,3 +86,12 @@ def test_loader_rejects_bad_expected_shape_for_task(
     path = write_suite_file("bad_expected.yaml", broken)
     with pytest.raises(DatasetError, match="Invalid expected shape"):
         load_suite(path)
+
+
+def test_loader_rejects_unknown_check_type(write_suite_file, minimal_suite_payload: dict) -> None:
+    broken = dict(minimal_suite_payload)
+    broken["cases"] = [dict(minimal_suite_payload["cases"][0])]
+    broken["cases"][0]["checks"] = [{"type": "semantic_similarity", "config": {}}]
+    path = write_suite_file("bad_check.json", broken)
+    with pytest.raises(DatasetError, match="Unsupported check type"):
+        load_suite(path)

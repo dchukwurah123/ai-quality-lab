@@ -21,8 +21,8 @@ ai-quality-lab/
     loaders/                         # Dataset loading + validation
     models/                          # Core data models and typed expected outputs
     reports/                         # JSON and Markdown report writers
+    runner.py                        # Suite orchestration (adapter -> scorers -> results)
     scorers/                         # Deterministic scorer implementations
-    simple_runner.py                 # Suite orchestration (adapter -> scorers -> results)
   tests/                             # Pytest suite
   .github/workflows/ci.yml           # Lint + test workflow
 ```
@@ -42,6 +42,7 @@ ai-quality-lab/
 - **Transparent scoring**: each check returns pass/fail, numeric score, explanation, and details.
 - **Failure-oriented reporting**: summaries highlight top reasons for failed checks.
 - **Offline by default**: core harness works without paid APIs or external services.
+- **Criteria-first datasets**: unsupported check types fail at load time, not mid-run.
 
 ## Supported Task Types
 
@@ -150,6 +151,7 @@ Tests are designed to be readable and close to behavior:
 - `tests/test_reports_simple.py`: JSON and Markdown report content checks.
 - `tests/test_cli_behavior.py`: CLI outputs, thresholds, and failure paths.
 - `tests/test_adapters_simple.py`: adapter boundary behavior without live APIs.
+- `tests/test_task_suites.py`: task-specific end-to-end suite runs + failure explanation checks.
 
 The suite avoids overmocking; most tests run real code paths with synthetic data fixtures.
 

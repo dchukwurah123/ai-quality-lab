@@ -10,6 +10,15 @@ import yaml
 
 from ai_quality_lab.models import EvalCase, EvalCheck, EvalSuite, TaskType, parse_expected
 
+SUPPORTED_CHECK_TYPES = {
+    "exact_match",
+    "allowed_labels",
+    "regex_constraints",
+    "schema_validation",
+    "field_extraction",
+    "rubric",
+}
+
 
 class DatasetError(ValueError):
     """Raised when dataset shape is invalid."""
@@ -77,6 +86,10 @@ def _parse_check(raw: Any) -> EvalCheck:
     if not isinstance(raw, dict):
         raise DatasetError("Each check must be an object.")
     check_type = _required_str(raw, "type")
+    if check_type not in SUPPORTED_CHECK_TYPES:
+        raise DatasetError(
+            f"Unsupported check type '{check_type}'. Expected one of {sorted(SUPPORTED_CHECK_TYPES)}."
+        )
     config = raw.get("config", {})
     if not isinstance(config, dict):
         raise DatasetError("'config' must be an object when provided.")

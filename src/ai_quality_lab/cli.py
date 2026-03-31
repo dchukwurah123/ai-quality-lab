@@ -12,7 +12,7 @@ from ai_quality_lab.adapters import AdapterName
 from ai_quality_lab.loaders import DatasetError
 from ai_quality_lab.loaders import load_suite
 from ai_quality_lab.models import SuiteOutcome
-from ai_quality_lab.simple_runner import run_suite
+from ai_quality_lab.runner import run_suite
 
 
 def build_parser() -> argparse.ArgumentParser:
