@@ -33,6 +33,7 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["ai_quality_lab*"]
 
 [tool.pytest.ini_options]
 addopts = "-q"
