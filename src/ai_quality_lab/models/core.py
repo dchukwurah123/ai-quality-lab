@@ -26,7 +26,8 @@ class SummarizationExpected(ExpectedOutput):
     summary: str
 
     def __init__(self, summary: str) -> None:
-        super().__init__(kind="summarization")
+        # Explicit super() call keeps Python 3.10 + dataclass(slots=True) compatible.
+        super(SummarizationExpected, self).__init__(kind="summarization")
         self.summary = summary
 
     def reference_value(self) -> str:
@@ -39,7 +40,7 @@ class ClassificationExpected(ExpectedOutput):
     allowed_labels: list[str] = field(default_factory=list)
 
     def __init__(self, label: str, allowed_labels: list[str] | None = None) -> None:
-        super().__init__(kind="classification")
+        super(ClassificationExpected, self).__init__(kind="classification")
         self.label = label
         self.allowed_labels = allowed_labels or []
 
@@ -53,7 +54,7 @@ class ExtractionExpected(ExpectedOutput):
     required_fields: list[str] = field(default_factory=list)
 
     def __init__(self, fields: dict[str, Any], required_fields: list[str] | None = None) -> None:
-        super().__init__(kind="extraction")
+        super(ExtractionExpected, self).__init__(kind="extraction")
         self.fields = fields
         self.required_fields = required_fields or list(fields.keys())
 
@@ -73,7 +74,7 @@ class ComplianceExpected(ExpectedOutput):
         policy_id: str | None = None,
         required_terms: list[str] | None = None,
     ) -> None:
-        super().__init__(kind="compliance")
+        super(ComplianceExpected, self).__init__(kind="compliance")
         self.verdict = verdict
         self.policy_id = policy_id
         self.required_terms = required_terms or []

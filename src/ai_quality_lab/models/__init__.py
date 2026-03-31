@@ -10,8 +10,8 @@ from ai_quality_lab.models.core import (
     EvalSuite,
     ExpectedOutput,
     ExtractionExpected,
-    SummarizationExpected,
     SuiteOutcome,
+    SummarizationExpected,
     TaskType,
     parse_expected,
 )
